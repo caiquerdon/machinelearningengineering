@@ -1,2 +1,2 @@
 # machinelearningengineering
-Este repositorio contém os projetos desenvolvidos durante minha pós graduação em Machine Learning Engineering da FIAP dos BAGRONS
+Este repositorio contém os projetos desenvolvidos durante o curso de pós graduação em Machine Learning Engineering da FIAP dos BAGRONS

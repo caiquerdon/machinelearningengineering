@@ -36,4 +36,5 @@ if __name__ == '__main__':
 # D - DELETE
 
 # CRIANDO O GET
-    # O método GET é usado para solicitar dados de um servidor. Ele é o método padrão usado pelos navegadores para solicitar páginas da web.
+    # O método GET é usado para solicitar dados de um servidor. 
+    # Ele é o método padrão usado pelos navegadores para solicitar páginas da web.

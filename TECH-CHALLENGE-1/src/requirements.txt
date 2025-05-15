@@ -1,0 +1,9 @@
+flask
+requests
+beautifulsoup4
+flask-cors
+flask-restx
+PyJWT
+boto3
+selenium
+pandas

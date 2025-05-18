@@ -1,4 +1,5 @@
 flask
+flask_restx
 requests
 beautifulsoup4
 flask-cors

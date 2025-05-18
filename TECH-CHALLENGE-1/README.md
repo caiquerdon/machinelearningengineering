@@ -10,9 +10,12 @@ Criar uma API REST em Python que consome dados públicos do site da Embrapa (Vit
 ## 🚀 Funcionalidades
 
 - Consulta dos dados da aba **Produção** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Processamento** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Comercialização** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Importação** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Exportação** diretamente do CSV oficial da Embrapa.
 - API REST com Flask.
 - Documentação via Swagger (Flask-RESTX).
-- Estrutura pronta para expansão para outras abas (Processamento, Comercialização, etc).
 
 ## 🔧 Tecnologias
 
@@ -87,6 +90,7 @@ Os dados obtidos por essa API podem ser usados para:
 
 Este projeto é parte do desafio da Fase 1 da Pós-Graduação em Engenharia de Machine Learning e representa 60% da nota da fase.
 
-## 🧑‍💻 Autor
+## 🧑‍💻 Autores
 
-Matheus Pavani
+Caique Rodrigues do Nascimento
+Gustavo Bortolami Carrillo

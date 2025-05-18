@@ -1,5 +1,5 @@
 
-# API Embrapa - Produção Vitivinícola 🍇
+# API Embrapa - Vitivinicultura
 
 Este projeto faz parte do Tech Challenge da Pós-Graduação em Engenharia de Machine Learning.
 

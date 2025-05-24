@@ -1,3 +1,4 @@
+flask-jwt-extended
 flask
 flask_restx
 requests

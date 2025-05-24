@@ -21,13 +21,16 @@
 
 # COLOCAR UMA FUNCAO PARA VERIFICAR SE O SITE ESTA NO AR
 # COLOCAR UM VALIDADOR PARA BATER NO S3 ANTES DE BATER NO SITE
-# A idea do deploy é um link publico disponibilizando a API para testes. Você pode usar ferramentas como Heroku, Vercel, Render, Fly.io ou qualquer plataforma similar
+# A idea do deploy é um link publico disponibilizando a API para testes. 
+# Você pode usar ferramentas como Heroku, Vercel, Render, Fly.io ou qualquer plataforma similar
 
+#IMPORTS
 from flask import Flask, jsonify, request, render_template_string
 from flask_restx import Api, Resource, fields
 import pandas as pd
 import requests
 from io import StringIO
+
 
 app = Flask(__name__)
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',

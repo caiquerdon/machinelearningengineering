@@ -1,27 +1,12 @@
 #!/bin/bash
 
-# Nome do pacote final
-PACKAGE_NAME="lambda-embrapa.zip"
+mkdir -p lambda_build
+cp app.py requirements.txt lambda_build/
+echo "from app import handler" > lambda_build/lambda_function.py
 
-# Pasta da venv
-VENV_DIR="venv"
-
-# Python version folder (ajuste se necessário)
-PYTHON_VERSION="python3.9"
-
-# Limpa arquivos antigos
-rm -rf lambda-package "$PACKAGE_NAME"
-mkdir lambda-package
-
-# Copia dependências da venv para a pasta
-cp -r $VENV_DIR/lib/$PYTHON_VERSION/site-packages/* lambda-package/
-
-# Copia o código da aplicação
-cp lambda_function.py lambda-package/
-
-# Cria o pacote zipado
-cd lambda-package
-zip -r ../$PACKAGE_NAME .
-cd ..
-
-echo "✅ Pacote $PACKAGE_NAME criado com sucesso!"
+docker run --rm -v "$PWD/lambda_build":/var/task amazonlinux:2 \
+  /bin/bash -c "
+    yum install -y python3 pip zip;
+    pip3 install -r requirements.txt -t .;
+    zip -r9 /var/task/api_embrapa_lambda.zip .
+"

@@ -1,11 +1,9 @@
-flask-jwt-extended
 flask
-flask_restx
-requests
-beautifulsoup4
-flask-cors
 flask-restx
-PyJWT
-boto3
-selenium
+requests
 pandas
+gunicorn==21.2.0
+
+
+
+

@@ -1,22 +1,28 @@
+# imports
 
 from flask import Flask, jsonify, request, render_template_string
 from flask_restx import Api, Resource, fields
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
-from datetime import timedelta
 import pandas as pd
 import requests
 from io import StringIO
+import datetime
 
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = "bagre123"  # Trocar em produção!
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config['JWT_SECRET_KEY'] = 'losbagres3024'  # troque por algo seguro
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=1)
 
 jwt = JWTManager(app)
-
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',
           description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria')
 
 ns = api.namespace('dados', description='Operações com os dados vitivinícolas')
+
+# Usuários simples para autenticação
+USERS = {
+    "admin": "senha123",
+    "usuario": "1234"
+}
 
 CSV_URLS = {
     'producao': 'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv',
@@ -63,13 +69,8 @@ def carregar_dados(categoria):
         response = requests.get(url, timeout=10)
         response.encoding = config['encoding']
         content = response.text.replace('\x00', '').strip()
-        df = pd.read_csv(
-            StringIO(content),
-            sep=config['sep'],
-            engine='python',
-            on_bad_lines='skip',
-            skip_blank_lines=True
-        )
+        df = pd.read_csv(StringIO(content), sep=config['sep'], engine='python',
+                         on_bad_lines='skip', skip_blank_lines=True)
         if len(df.columns) > 1 and not df.empty:
             df.dropna(how='all', inplace=True)
             df.columns = [str(col).strip() for col in df.columns]
@@ -78,30 +79,25 @@ def carregar_dados(categoria):
         print(f"[{categoria}] Erro ao carregar CSV: {e}")
     return None
 
+# Login
 @api.route('/login')
 class Login(Resource):
-    @api.doc(params={'username': 'Usuário', 'password': 'Senha'})
+    @api.doc(params={'username': 'Nome de usuário', 'password': 'Senha'})
     def post(self):
-        username = request.json.get('username')
-        password = request.json.get('password')
-        if username == 'admin' and password == '123':
-            access_token = create_access_token(identity=username)
-            return jsonify(access_token=access_token)
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        if USERS.get(username) == password:
+            token = create_access_token(identity=username)
+            return {'access_token': token}, 200
         return {'erro': 'Credenciais inválidas'}, 401
-
-@api.route('/categorias')
-class ListaCategorias(Resource):
-    @api.doc(description="Lista todas as categorias de dados vitivinícolas disponíveis")
-    def get(self):
-        return jsonify({
-            "categorias_disponiveis": list(CSV_URLS.keys())
-        })
 
 @ns.route('/')
 class TodasAsLinhas(Resource):
     @jwt_required()
-    @ns.doc(params={'categoria': 'Nome da categoria desejada (pode repetir ?categoria=...)'})
+    @ns.doc(params={'categoria': 'Nome da categoria desejada'})
     def get(self):
+        """Retorna todos os dados das categorias informadas (Requer token JWT)"""
         categorias = request.args.getlist('categoria')
         if not categorias:
             return {'erro': 'Nenhuma categoria informada'}, 400
@@ -120,6 +116,7 @@ class TodasAsLinhas(Resource):
 class LinhaEspecifica(Resource):
     @jwt_required()
     def get(self, categoria, linha):
+        """Retorna os dados de uma linha específica (Requer token JWT)"""
         df = carregar_dados(categoria)
         if df is None or df.empty:
             return {'erro': 'Categoria inválida ou erro ao carregar dados'}, 404
@@ -127,9 +124,16 @@ class LinhaEspecifica(Resource):
             return {'erro': 'Índice fora do intervalo'}, 400
         return jsonify(df.iloc[linha].to_dict())
 
+@api.route('/categorias')
+class ListaCategorias(Resource):
+    def get(self):
+        return jsonify({
+            "categorias_disponiveis": list(CSV_URLS.keys())
+        })
+
 @app.route('/')
 def index():
-    return "API Embrapa com JWT protegida. Acesse /swagger-ui/ para documentação."
+    return "<h2>API Embrapa com autenticação JWT. Acesse /swagger-ui para documentação</h2>"
 
 if __name__ == '__main__':
     app.run(debug=True)

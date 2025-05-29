@@ -1,42 +1,28 @@
-# Author: Caique Nascimento e Gustavo Carrillo
+# imports
 
-# AJUSTAR E INCLUIR:
-
-#   http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaViniferas.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaAmericanas.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaMesa.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaSemclass.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/Comercio.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpVinhos.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpEspumantes.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpFrescas.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpPassas.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpSuco.csv - OK 
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpVinho.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpEspumantes.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv - OK
-
-
-# COLOCAR UMA FUNCAO PARA VERIFICAR SE O SITE ESTA NO AR
-# COLOCAR UM VALIDADOR PARA BATER NO S3 ANTES DE BATER NO SITE
-# A idea do deploy é um link publico disponibilizando a API para testes. 
-# Você pode usar ferramentas como Heroku, Vercel, Render, Fly.io ou qualquer plataforma similar
-
-#IMPORTS
 from flask import Flask, jsonify, request, render_template_string
 from flask_restx import Api, Resource, fields
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 import pandas as pd
 import requests
 from io import StringIO
-
+import datetime
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'losbagres3024'  # troque por algo seguro
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=1)
+
+jwt = JWTManager(app)
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',
           description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria')
 
 ns = api.namespace('dados', description='Operações com os dados vitivinícolas')
+
+# Usuários simples para autenticação
+USERS = {
+    "admin": "senha123",
+    "usuario": "1234"
+}
 
 CSV_URLS = {
     'producao': 'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv',
@@ -74,10 +60,6 @@ CSV_CONFIGS = {
     'exp_suco': {'sep': r'\s{1,}', 'encoding': 'latin1'},
 }
 
-categoria_model = api.model('Categoria', {
-    'categoria': fields.String(required=True, description='Categoria dos dados')
-})
-
 def carregar_dados(categoria):
     url = CSV_URLS.get(categoria)
     config = CSV_CONFIGS.get(categoria, {'sep': ';', 'encoding': 'utf-8'})
@@ -87,13 +69,8 @@ def carregar_dados(categoria):
         response = requests.get(url, timeout=10)
         response.encoding = config['encoding']
         content = response.text.replace('\x00', '').strip()
-        df = pd.read_csv(
-            StringIO(content),
-            sep=config['sep'],
-            engine='python',
-            on_bad_lines='skip',
-            skip_blank_lines=True
-        )
+        df = pd.read_csv(StringIO(content), sep=config['sep'], engine='python',
+                         on_bad_lines='skip', skip_blank_lines=True)
         if len(df.columns) > 1 and not df.empty:
             df.dropna(how='all', inplace=True)
             df.columns = [str(col).strip() for col in df.columns]
@@ -102,11 +79,25 @@ def carregar_dados(categoria):
         print(f"[{categoria}] Erro ao carregar CSV: {e}")
     return None
 
+# Login
+@api.route('/login')
+class Login(Resource):
+    @api.doc(params={'username': 'Nome de usuário', 'password': 'Senha'})
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        if USERS.get(username) == password:
+            token = create_access_token(identity=username)
+            return {'access_token': token}, 200
+        return {'erro': 'Credenciais inválidas'}, 401
+
 @ns.route('/')
 class TodasAsLinhas(Resource):
-    @ns.doc(params={'categoria': 'Nome da categoria desejada (pode repetir ?categoria=...)'})
+    @jwt_required()
+    @ns.doc(params={'categoria': 'Nome da categoria desejada'})
     def get(self):
-        """Retorna todos os dados das categorias informadas"""
+        """Retorna todos os dados das categorias informadas (Requer token JWT)"""
         categorias = request.args.getlist('categoria')
         if not categorias:
             return {'erro': 'Nenhuma categoria informada'}, 400
@@ -123,8 +114,9 @@ class TodasAsLinhas(Resource):
 @ns.param('categoria', 'Nome da categoria desejada')
 @ns.param('linha', 'Índice da linha desejada')
 class LinhaEspecifica(Resource):
+    @jwt_required()
     def get(self, categoria, linha):
-        """Retorna os dados de uma linha específica"""
+        """Retorna os dados de uma linha específica (Requer token JWT)"""
         df = carregar_dados(categoria)
         if df is None or df.empty:
             return {'erro': 'Categoria inválida ou erro ao carregar dados'}, 404
@@ -134,7 +126,6 @@ class LinhaEspecifica(Resource):
 
 @api.route('/categorias')
 class ListaCategorias(Resource):
-    @api.doc(description="Lista todas as categorias de dados vitivinícolas disponíveis")
     def get(self):
         return jsonify({
             "categorias_disponiveis": list(CSV_URLS.keys())
@@ -142,55 +133,7 @@ class ListaCategorias(Resource):
 
 @app.route('/')
 def index():
-    html = '''
-    <html>
-    <head>
-        <title>API Embrapa</title>
-        <style>
-            body { font-family: Arial, sans-serif; display: flex; margin: 0; }
-            .sidebar {
-                width: 250px;
-                background: #f2f2f2;
-                padding: 20px;
-                height: 100vh;
-                box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
-            }
-            .content {
-                padding: 20px;
-                flex: 1;
-            }
-            .sidebar h2 {
-                margin-top: 0;
-            }
-            .categoria-link {
-                display: block;
-                margin: 8px 0;
-                color: #0066cc;
-                text-decoration: none;
-            }
-            .categoria-link:hover {
-                text-decoration: underline;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="sidebar">
-            <h2>Categorias</h2>
-            {% for key in categorias %}
-                <a class="categoria-link" href="/dados/?categoria={{ key }}">{{ key }}</a>
-            {% endfor %}
-            <br>
-            <a href="/swagger-ui/">Documentação Swagger</a>
-        </div>
-        <div class="content">
-            <h1>API de dados vitivinícolas da Embrapa</h1>
-            <p>Selecione uma categoria ao lado para consultar os dados diretamente ou clique abaixo para acessar a documentação Swagger.</p>
-            <p><a href="/swagger-ui/">→ Ir para Swagger</a></p>
-        </div>
-    </body>
-    </html>
-    '''
-    return render_template_string(html, categorias=CSV_URLS.keys())
+    return "<h2>API Embrapa com autenticação JWT. Acesse /swagger-ui para documentação</h2>"
 
 if __name__ == '__main__':
     app.run(debug=True)

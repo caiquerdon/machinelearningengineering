@@ -1,9 +1,0 @@
-flask
-flask-restx
-requests
-pandas
-gunicorn==21.2.0
-
-
-
-

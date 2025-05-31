@@ -44,7 +44,7 @@ Mensagem de boas-vindas e link para a documentação.
 Disponível automaticamente em:
 
 ```
-http://localhost:5000/
+https://api-embrapa-28xn.onrender.com
 ```
 
 ## ▶️ Como executar localmente
@@ -92,5 +92,5 @@ Este projeto é parte do desafio da Fase 1 da Pós-Graduação em Engenharia de 
 
 ## 🧑‍💻 Autores
 
-Caique Rodrigues do Nascimento
+Caique Nascimento
 Gustavo Carrillo

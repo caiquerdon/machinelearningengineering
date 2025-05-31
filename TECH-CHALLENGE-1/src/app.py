@@ -1,43 +1,27 @@
-# Author: Caique Nascimento e Gustavo Carrillo
-
-# AJUSTAR E INCLUIR:
-
-#   http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaViniferas.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaAmericanas.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaMesa.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ProcessaSemclass.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/Comercio.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpVinhos.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpEspumantes.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpFrescas.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpPassas.csv - OK FAZER DOUBLE CHECK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ImpSuco.csv - OK 
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpVinho.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpEspumantes.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv - OK
-#   http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv - OK
+##########################################
+##############  Authors ##################
+## Caique Nascimento e Gustavo Carrillo ##                                   
+##########################################
+##########################################
 
 
-# COLOCAR UMA FUNCAO PARA VERIFICAR SE O SITE ESTA NO AR
-# COLOCAR UM VALIDADOR PARA BATER NO S3 ANTES DE BATER NO SITE
-# A idea do deploy é um link publico disponibilizando a API para testes. 
-# Você pode usar ferramentas como Heroku, Vercel, Render, Fly.io ou qualquer plataforma similar
 
-#IMPORTS
+# Importando as bibliotecas necessárias
 from flask import Flask, jsonify, request, render_template_string
 from flask_restx import Api, Resource, fields
 import pandas as pd
 import requests
 from io import StringIO
 
-
+# Configuração do Flask
 app = Flask(__name__)
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',
           description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria')
 
+# Configuração do namespace da API
 ns = api.namespace('dados', description='Operações com os dados vitivinícolas')
 
+# CSV 
 CSV_URLS = {
     'producao': 'http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv',
     'processa_viniferas': 'http://vitibrasil.cnpuv.embrapa.br/download/ProcessaViniferas.csv',
@@ -56,6 +40,7 @@ CSV_URLS = {
     'exp_suco': 'http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv',
 }
 
+# 
 CSV_CONFIGS = {
     'producao': {'sep': ';', 'encoding': 'latin1'},
     'processa_viniferas': {'sep': ';', 'encoding': 'latin1'},
@@ -74,10 +59,12 @@ CSV_CONFIGS = {
     'exp_suco': {'sep': r'\s{1,}', 'encoding': 'latin1'},
 }
 
+# 
 categoria_model = api.model('Categoria', {
     'categoria': fields.String(required=True, description='Categoria dos dados')
 })
 
+# Funcao para carregar os dados de uma categoria específica
 def carregar_dados(categoria):
     url = CSV_URLS.get(categoria)
     config = CSV_CONFIGS.get(categoria, {'sep': ';', 'encoding': 'utf-8'})
@@ -101,8 +88,9 @@ def carregar_dados(categoria):
     except Exception as e:
         print(f"[{categoria}] Erro ao carregar CSV: {e}")
     return None
-
+# Configuração do endpoint para obter todas as linhas de uma ou mais categorias
 @ns.route('/')
+# @ns.param('categoria', 'Nome da categoria desejada (pode repetir ?categoria=...)')
 class TodasAsLinhas(Resource):
     @ns.doc(params={'categoria': 'Nome da categoria desejada (pode repetir ?categoria=...)'})
     def get(self):
@@ -119,6 +107,7 @@ class TodasAsLinhas(Resource):
                 resultado[cat] = f"Erro ao carregar dados da categoria: {cat}"
         return jsonify(resultado)
 
+# Configuração do endpoint para obter uma linha específica de uma categoria
 @ns.route('/<string:categoria>/<int:linha>')
 @ns.param('categoria', 'Nome da categoria desejada')
 @ns.param('linha', 'Índice da linha desejada')
@@ -131,7 +120,8 @@ class LinhaEspecifica(Resource):
         if linha < 0 or linha >= len(df):
             return {'erro': 'Índice fora do intervalo'}, 400
         return jsonify(df.iloc[linha].to_dict())
-
+    
+# Configuração do endpoint para listar todas as categorias disponíveis
 @api.route('/categorias')
 class ListaCategorias(Resource):
     @api.doc(description="Lista todas as categorias de dados vitivinícolas disponíveis")
@@ -139,58 +129,62 @@ class ListaCategorias(Resource):
         return jsonify({
             "categorias_disponiveis": list(CSV_URLS.keys())
         })
+# Configuração do endpoint para acessar a documentação Swagger UI
+
 
 @app.route('/')
 def index():
-    html = '''
-    <html>
-    <head>
-        <title>API Embrapa</title>
-        <style>
-            body { font-family: Arial, sans-serif; display: flex; margin: 0; }
-            .sidebar {
-                width: 250px;
-                background: #f2f2f2;
-                padding: 20px;
-                height: 100vh;
-                box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
-            }
-            .content {
-                padding: 20px;
-                flex: 1;
-            }
-            .sidebar h2 {
-                margin-top: 0;
-            }
-            .categoria-link {
-                display: block;
-                margin: 8px 0;
-                color: #0066cc;
-                text-decoration: none;
-            }
-            .categoria-link:hover {
-                text-decoration: underline;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="sidebar">
-            <h2>Categorias</h2>
-            {% for key in categorias %}
-                <a class="categoria-link" href="/dados/?categoria={{ key }}">{{ key }}</a>
-            {% endfor %}
-            <br>
-            <a href="/swagger-ui/">Documentação Swagger</a>
-        </div>
-        <div class="content">
-            <h1>API de dados vitivinícolas da Embrapa</h1>
-            <p>Selecione uma categoria ao lado para consultar os dados diretamente ou clique abaixo para acessar a documentação Swagger.</p>
-            <p><a href="/swagger-ui/">→ Ir para Swagger</a></p>
-        </div>
-    </body>
-    </html>
-    '''
-    return render_template_string(html, categorias=CSV_URLS.keys())
+     html = '''
+     <html>
+     <head>
+         <title>API Embrapa</title>
+         <style>
+             body { font-family: Arial, sans-serif; display: flex; margin: 0; }
+             .sidebar {
+                 width: 250px;
+                 background: #f2f2f2;
+                 padding: 20px;
+                 height: 100vh;
+                 box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+             }
+             .content {
+                 padding: 20px;
+                 flex: 1;
+             }
+             .sidebar h2 {
+                 margin-top: 0;
+             }
+             .categoria-link {
+                 display: block;
+                 margin: 8px 0;
+                 color: #0066cc;
+                 text-decoration: none;
+             }
+             .categoria-link:hover {
+                 text-decoration: underline;
+             }
+         </style>
+     </head>
+     <body>
+         <div class="sidebar">
+             <h2>Categorias</h2>
+             {% for key in categorias %}
+                 <a class="categoria-link" href="/dados/?categoria={{ key }}">{{ key }}</a>
+             {% endfor %}
+             <br>
+             <a href="/swagger-ui/">Documentação Swagger</a>
+         </div>
+         <div class="content">
+             <h1>API de dados vitivinícolas da Embrapa</h1>
+             <p>Selecione uma categoria ao lado para consultar os dados diretamente ou clique abaixo para acessar a documentação Swagger.</p>
+             <p><a href="/swagger-ui/">→ Ir para Swagger</a></p>
+         </div>
+     </body>
+     </html>
+     '''
+     return render_template_string(html, categorias=CSV_URLS.keys())
+
+# Configuração do endpoint para acessar a documentação Swagger UI
 
 if __name__ == '__main__':
     app.run(debug=True)

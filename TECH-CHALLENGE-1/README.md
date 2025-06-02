@@ -7,7 +7,7 @@ Acesse a API e sua documentação interativa hospedada gratuitamente no Render:
 
 👉 https://api-embrapa-28xn.onrender.com
 
-## Vídeo demonstrativo do Deploy ▶️: 
+## ▶️ Vídeo demonstrativo do Deploy : 
 https://www.youtube.com/watch?v=AEXQBhZ0rB0&feature=youtu.be
 ---
 

@@ -25,6 +25,16 @@ Criar uma API REST em Python que consome dados públicos do site da Embrapa (Vit
 - Pandas
 - Requests
 
+## 🔗 Link da API em Produção
+
+Acesse a API em produção aqui:  
+👉 [https://api-embrapa-28xn.onrender.com](https://api-embrapa-28xn.onrender.com)
+
+Documentação Swagger:  
+📄 [https://api-embrapa-28xn.onrender.com/swagger-ui/](https://api-embrapa-28xn.onrender.com/swagger-ui/)
+
+---
+
 ## 📂 Endpoints
 
 ### `GET /producao/`

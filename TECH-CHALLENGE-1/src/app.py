@@ -16,8 +16,7 @@ from io import StringIO
 # Configuração do Flask
 app = Flask(__name__)
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',
-          description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria',
-          doc='/swagger-ui/')
+          description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria')
 
 # Configuração do namespace da API
 ns = api.namespace('dados', description='Operações com os dados vitivinícolas')

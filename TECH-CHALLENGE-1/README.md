@@ -92,5 +92,5 @@ Este projeto é parte do desafio da Fase 1 da Pós-Graduação em Engenharia de 
 
 ## 🧑‍💻 Autores
 
-Caique Nascimento
-Gustavo Carrillo
+- Caique Nascimento
+- Gustavo Carrillo

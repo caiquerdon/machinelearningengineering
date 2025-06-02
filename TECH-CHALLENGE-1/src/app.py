@@ -16,7 +16,8 @@ from io import StringIO
 # Configuração do Flask
 app = Flask(__name__)
 api = Api(app, version='1.0', title='API Embrapa - Dados Vitivinícolas',
-          description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria')
+          description='Consulta dados públicos da Embrapa diretamente dos arquivos CSV por categoria',
+          doc='/swagger-ui/')
 
 # Configuração do namespace da API
 ns = api.namespace('dados', description='Operações com os dados vitivinícolas')
@@ -59,7 +60,7 @@ CSV_CONFIGS = {
     'exp_suco': {'sep': r'\s{1,}', 'encoding': 'latin1'},
 }
 
-# 
+# Definição do modelo de dados para a categoria
 categoria_model = api.model('Categoria', {
     'categoria': fields.String(required=True, description='Categoria dos dados')
 })
@@ -108,18 +109,18 @@ class TodasAsLinhas(Resource):
         return jsonify(resultado)
 
 # Configuração do endpoint para obter uma linha específica de uma categoria
-@ns.route('/<string:categoria>/<int:linha>')
-@ns.param('categoria', 'Nome da categoria desejada')
-@ns.param('linha', 'Índice da linha desejada')
-class LinhaEspecifica(Resource):
-    def get(self, categoria, linha):
-        """Retorna os dados de uma linha específica"""
-        df = carregar_dados(categoria)
-        if df is None or df.empty:
-            return {'erro': 'Categoria inválida ou erro ao carregar dados'}, 404
-        if linha < 0 or linha >= len(df):
-            return {'erro': 'Índice fora do intervalo'}, 400
-        return jsonify(df.iloc[linha].to_dict())
+# @ns.route('/<string:categoria>/<int:linha>')
+# @ns.param('categoria', 'Nome da categoria desejada')
+# @ns.param('linha', 'Índice da linha desejada')
+# class LinhaEspecifica(Resource):
+#     def get(self, categoria, linha):
+#         """Retorna os dados de uma linha específica"""
+#         df = carregar_dados(categoria)
+#         if df is None or df.empty:
+#             return {'erro': 'Categoria inválida ou erro ao carregar dados'}, 404
+#         if linha < 0 or linha >= len(df):
+#             return {'erro': 'Índice fora do intervalo'}, 400
+#         return jsonify(df.iloc[linha].to_dict())
     
 # Configuração do endpoint para listar todas as categorias disponíveis
 @api.route('/categorias')

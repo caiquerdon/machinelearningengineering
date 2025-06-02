@@ -1,16 +1,27 @@
-# API Embrapa - Vitivinicultura
+# 🟣 API Embrapa – Dados Vitivinícolas
 
-Este projeto faz parte do Tech Challenge da Pós-Graduação em Engenharia de Machine Learning.
+Esta aplicação disponibiliza uma API pública para consulta dos dados vitivinícolas da Embrapa, incluindo produção nacional, importações e exportações de uvas, vinhos, sucos e derivados.
+
+## 🔗 Acesse a API
+Acesse a API e sua documentação interativa hospedada gratuitamente no Render:
+
+👉 https://api-embrapa-28xn.onrender.com
+
 
 ---
 
-## 📌 Objetivo
+## 🛠 Tecnologias Utilizadas
 
-Criar uma API REST em Python que consome dados públicos do site da Embrapa (VitiBrasil) e os disponibiliza em formato JSON, com documentação automática via Swagger.
+- **Python 3.9 ou superior+**
+- **Flask**
+- **Flask-RESTx**
+- **Pandas**
+- **Requests**
+- **Gunicorn** (para deploy no Render)
 
 ---
 
-## 🚀 Funcionalidades
+## 📌 Funcionalidades da API
 
 - Consulta dos dados da aba **Produção** diretamente do CSV oficial da Embrapa.
 - Consulta dos dados da aba **Processamento** diretamente do CSV oficial da Embrapa.
@@ -22,40 +33,51 @@ Criar uma API REST em Python que consome dados públicos do site da Embrapa (Vit
 
 ---
 
-## 🔧 Tecnologias Utilizadas
-
-- Python 3.9+
-- Flask
-- Flask-RESTX
-- Pandas
-- Requests
-
----
-
-## 🔗 Link da API em Produção
-
-Acesse a API e sua documentação interativa hospedada gratuitamente no Render:
-
-👉 https://api-embrapa-28xn.onrender.com
-
----
-
-## 📂 Endpoints Principais
-
+### 🔹 Listar Categorias
 ```
-GET /                    → Mensagem de boas-vindas com link para documentação
-GET /producao/           → Lista completa da aba Produção
-GET /producao/<linha>    → Retorna uma linha específica por índice
-# (Outros endpoints seguem padrão similar)
+GET /categorias
+```
+
+### 🔹 Obter todos os dados de uma categoria
+```
+GET /dados/categoria/<categoria>
+```
+
+## 📄 Exemplo de Retorno
+
+### Exemplo `/dados/categoria/producao`
+```json
+[
+  {
+    "Ano": 2020,
+    "Região": "Serra Gaúcha",
+    "Quantidade (t)": 123456
+  }
+]
 ```
 
 ---
 
-## 📄 Documentação Swagger
+## 🖥️ Página Inicial
 
-A interface Swagger é gerada automaticamente por meio do Flask-RESTX e está disponível em:
+A rota `/` exibe uma página HTML simples e links diretos para as categorias, além do link para a documentação Swagger.
 
-📍 https://api-embrapa-28xn.onrender.com
+---
+
+## 🚀 Deploy no Render
+
+### Estrutura esperada:
+```
+.
+├── app.py
+├── requirements.txt
+└── Procfile
+```
+
+### Exemplo de `Procfile` 
+```txt
+web: gunicorn app:app
+```
 
 ---
 
@@ -64,8 +86,8 @@ A interface Swagger é gerada automaticamente por meio do Flask-RESTX e está di
 ### 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seuusuario/tech-challenge-embrapa.git
-cd tech-challenge-embrapa
+git clone https://github.com/caiquerdon/machinelearningengineering.git
+cd TECH-CHALLENGE-1
 ```
 
 ### 2. (Opcional) Crie um ambiente virtual:
@@ -79,6 +101,7 @@ venv\Scripts\activate     # Windows
 ### 3. Instale as dependências:
 
 ```bash
+cd src
 pip install -r requirements.txt
 ```
 
@@ -88,7 +111,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Acesse http://localhost:5000/swagger-ui/ no navegador.
+Acesse http://localhost:5000 no navegador.
 
 ---
 
@@ -122,24 +145,7 @@ Isso instrui o Render a utilizar o Gunicorn para rodar a aplicação Flask a par
 Atualmente, a API está pública. Para ambientes de produção, recomenda-se implementar autenticação via JWT, OAuth2 ou chaves de API.
 
 ---
-
-## 🤖 Possíveis Aplicações em Machine Learning
-
-Os dados disponibilizados pela API podem servir como base para diversos estudos e modelos preditivos, como:
-
-- Previsão de produção por estado ou tipo de uva
-- Análise temporal e sazonalidade da produção
-- Estudos de mercado para exportação/importação de vinhos
-
----
-
-## 🎯 Desafio Acadêmico
-
-Este projeto integra a **Fase 1** da Pós-Graduação em Engenharia de Machine Learning e compõe **60% da nota final** dessa etapa.
-
----
-
 ## 👨‍💻 Autores
 
-- Caique Nascimento  
-- Gustavo Carrillo
+- **Caique Nascimento**
+- **Gustavo Carrillo**

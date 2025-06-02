@@ -1,92 +1,151 @@
+# 🟣 API Embrapa – Dados Vitivinícolas
 
-# API Embrapa - Produção Vitivinícola 🍇
+Esta aplicação disponibiliza uma API pública para consulta dos dados vitivinícolas da Embrapa, incluindo produção nacional, importações e exportações de uvas, vinhos, sucos e derivados.
 
-Este projeto faz parte do Tech Challenge da Pós-Graduação em Engenharia de Machine Learning.
+## 🔗 Acesse a API
+Acesse a API e sua documentação interativa hospedada gratuitamente no Render:
 
-## 📌 Objetivo
+👉 https://api-embrapa-28xn.onrender.com
 
-Criar uma API REST em Python que consome dados públicos do site da Embrapa (VitiBrasil) e os disponibiliza em formato JSON, com documentação automática via Swagger.
 
-## 🚀 Funcionalidades
+---
+
+## 🛠 Tecnologias Utilizadas
+
+- **Python 3.9 ou superior+**
+- **Flask**
+- **Flask-RESTx**
+- **Pandas**
+- **Requests**
+- **Gunicorn** (para deploy no Render)
+
+---
+
+## 📌 Funcionalidades da API
 
 - Consulta dos dados da aba **Produção** diretamente do CSV oficial da Embrapa.
-- API REST com Flask.
-- Documentação via Swagger (Flask-RESTX).
-- Estrutura pronta para expansão para outras abas (Processamento, Comercialização, etc).
+- Consulta dos dados da aba **Processamento** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Comercialização** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Importação** diretamente do CSV oficial da Embrapa.
+- Consulta dos dados da aba **Exportação** diretamente do CSV oficial da Embrapa.
+- API REST construída com **Flask** e documentada com **Flask-RESTX**.
+- Retorno em formato JSON e interface interativa via Swagger UI.
 
-## 🔧 Tecnologias
+---
 
-- Python 3.9+
-- Flask
-- Flask-RESTX
-- Pandas
-- Requests
-
-## 📂 Endpoints
-
-### `GET /producao/`
-
-Retorna todos os dados da aba Produção da Embrapa.
-
-### `GET /producao/<linha>`
-
-Retorna uma linha específica pelo índice (inteiro).
-
-### `GET /`
-
-Mensagem de boas-vindas e link para a documentação.
-
-## 📄 Documentação Swagger
-
-Disponível automaticamente em:
-
+### 🔹 Listar Categorias
 ```
-http://localhost:5000/
+GET /categorias
 ```
 
-## ▶️ Como executar localmente
+### 🔹 Obter todos os dados de uma categoria
+```
+GET /dados/categoria/<categoria>
+```
 
-1. Clone o repositório:
+## 📄 Exemplo de Retorno
+
+### Exemplo `/dados/categoria/producao`
+```json
+[
+  {
+    "Ano": 2020,
+    "Região": "Serra Gaúcha",
+    "Quantidade (t)": 123456
+  }
+]
+```
+
+---
+
+## 🖥️ Página Inicial
+
+A rota `/` exibe uma página HTML simples e links diretos para as categorias, além do link para a documentação Swagger.
+
+---
+
+## 🚀 Deploy no Render
+
+### Estrutura esperada:
+```
+.
+├── app.py
+├── requirements.txt
+└── Procfile
+```
+
+### Exemplo de `Procfile` 
+```txt
+web: gunicorn app:app
+```
+
+---
+
+## ▶️ Como Executar Localmente
+
+### 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seuusuario/tech-challenge-embrapa.git
-cd tech-challenge-embrapa
+git clone https://github.com/caiquerdon/machinelearningengineering.git
+cd TECH-CHALLENGE-1
 ```
 
-2. Crie e ative um ambiente virtual:
+### 2. (Opcional) Crie um ambiente virtual:
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
 ```
 
-3. Instale as dependências:
+### 3. Instale as dependências:
 
 ```bash
+cd src
 pip install -r requirements.txt
 ```
 
-4. Execute o app:
+### 4. Execute a aplicação:
 
 ```bash
 python app.py
 ```
 
+Acesse http://localhost:5000 no navegador.
+
+---
+
+## 📁 Estrutura de Diretórios
+
+```
+.
+├── app.py                  # Código principal da API
+├── requirements.txt        # Dependências do projeto
+├── Procfile                # Arquivo de execução para o Render
+├── README.md               # Este arquivo :)
+└── src/                    # Scripts e utilitários adicionais
+```
+
+---
+
+## ⚙️ Sobre o Procfile
+
+O `Procfile` é um arquivo usado por plataformas como o Render para saber como iniciar a aplicação. No nosso caso, ele contém:
+
+```txt
+web: gunicorn app:app
+```
+
+Isso instrui o Render a utilizar o Gunicorn para rodar a aplicação Flask a partir do arquivo `app.py`.
+
+---
+
 ## 🔐 Segurança
 
-A API atualmente está pública. Para produção, recomenda-se o uso de autenticação via JWT ou chave de API.
+Atualmente, a API está pública. Para ambientes de produção, recomenda-se implementar autenticação via JWT, OAuth2 ou chaves de API.
 
-## 🧠 Possível uso em ML
+---
+## 👨‍💻 Autores
 
-Os dados obtidos por essa API podem ser usados para:
-- Previsão de produção por estado ou tipo de uva
-- Análise de sazonalidade
-- Estudos de exportação/importação de vinho
-
-## 📌 Desafio proposto
-
-Este projeto é parte do desafio da Fase 1 da Pós-Graduação em Engenharia de Machine Learning e representa 60% da nota da fase.
-
-## 🧑‍💻 Autor
-
-Matheus Pavani
+- **Caique Nascimento**
+- **Gustavo Carrillo**

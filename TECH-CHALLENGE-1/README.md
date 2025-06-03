@@ -14,7 +14,7 @@ https://www.youtube.com/watch?v=AEXQBhZ0rB0&feature=youtu.be
 
 ## Arqueitetura do projeto
 
-![Arquitetura do Projeto](images/Arquitetura-TechChalange1.png
+![Arquitetura do Projeto](images/Arquitetura-TechChalange1.png)
 
 ## 🛠 Tecnologias Utilizadas
 

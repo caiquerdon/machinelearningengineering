@@ -1,1 +1,7 @@
 venv/
+lambda_function.zip
+lambda_app.py
+lambda_build
+api_embrapa_lambda.zip
+build.sh
+embrapa_api_jwt.py

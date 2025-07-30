@@ -40,7 +40,7 @@ SELECT * FROM b3_carteira_ibov
 WHERE year = '2025' AND month = '07' AND day = '30';
 ```
 
-## 📁 Estrutura de diretório no S3
+## Estrutura de diretório no S3
 
 ```
 s3://b3-dados-pregao-fiap-2025/
@@ -52,6 +52,6 @@ s3://b3-dados-pregao-fiap-2025/
                     └── output.parquet
 ```
 
-## 👨‍🎓 Autor
+## Autor
 Caique Rodrigues do Nascimento
 Gustavo Bortolami Carrillo

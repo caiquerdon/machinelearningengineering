@@ -33,7 +33,7 @@ Este projeto foi desenvolvido como parte da pós-graduação em Engenharia de Ma
 3. **Lambda-b3-trigger-glue.py (`lambda-b3-trigger-glue`)**: É acionada automaticamente por evento PUT no bucket e dispara o Glue Job visual (`Glue_B3`).
 4. **Glue Job Visual**: Lê dados do S3, processa e grava novos outputs prontos para análise.
 
-## 🔍 Consulta com Athena (opcional)
+## Consulta com Athena (opcional)
 
 ```sql
 SELECT * FROM b3_carteira_ibov

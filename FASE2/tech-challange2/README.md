@@ -36,13 +36,14 @@ Este projeto foi desenvolvido como parte da pós-graduação em Engenharia de Ma
 ## Consulta com Athena (opcional)
 
 ```sql
-SELECT * FROM b3_carteira_ibov
-WHERE year = '2025' AND month = '07' AND day = '30';
+SELECT * FROM refined_papeis_final;
 ```
 
 ## Estrutura de diretório no S3
 
 ```
+DADOS BRUTOS FORMATO .parquet
+
 s3://b3-dados-pregao-fiap-2025/
 └── b3/
     └── index=IBOV/

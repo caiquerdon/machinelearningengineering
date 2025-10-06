@@ -116,9 +116,7 @@ t_2 = t_1 \times \left(\frac{d_2}{d_1}\right)^r
 
 ### 6.2 Curvas e Gráficos
 - **Curva ROC** dos modelos:  
-![ROC Curve](roc_curve.png)
-- **Precision e Recall**:  
-![Precision/Recall](precision_recall.png)
+<img width="2537" height="1634" alt="image" src="https://github.com/user-attachments/assets/f5704dd0-0e98-4034-9cfb-056735c7c92c" />
 
 ---
 

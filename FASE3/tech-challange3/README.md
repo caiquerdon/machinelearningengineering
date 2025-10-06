@@ -44,9 +44,9 @@ O foco é classificar cada atleta como **apto (1)** ou **não apto (0)**.
 ### 2.2 Cálculo do Target
 O **tempo previsto de maratona** (`pred_marathon_h`) foi calculado a partir do **melhor desempenho em 10k** usando a fórmula de **Riegel**:
 
-\[
-t_2 = t_1 \times \left(\frac{d_2}{d_1}\right)^r
-\]
+$$
+t_2 = t_1 \times \left( \frac{d_2}{d_1} \right)^{r}
+$$
 
 - `t1` = tempo da prova conhecida (em horas)  
 - `d1` = distância da prova conhecida (em km)  

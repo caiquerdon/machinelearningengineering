@@ -1,0 +1,89 @@
+# Arquivo YAML para definir a HTTP API no API Gateway
+
+openapi: 3.0.3
+info:
+  title: Athlete Readiness API (HTTP API)
+  version: 1.0.0
+  description: |
+    Consulta no S3 se o atleta está pronto para a maratona.
+    Endpoint: GET /predict?athlete=ID
+x-amazon-apigateway-cors:
+  allowOrigins:
+    - "*"
+  allowHeaders:
+    - "*"
+  allowMethods:
+    - GET
+    - OPTIONS
+paths:
+  /predict:
+    get:
+      summary: Retorna status do atleta
+      description: Retorna somente o ID do atleta e a mensagem de prontidão.
+      parameters:
+        - in: query
+          name: athlete
+          required: true
+          description: ID do atleta (ex.: 771514)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+              examples:
+                exemplo:
+                  value:
+                    ID-ATLETA: "771514"
+                    RESULTADO: "O atleta está pronto para a Maratona"
+        "400":
+          description: Parâmetro ausente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                falta_param:
+                  value:
+                    erro: "Parâmetro 'athlete' é obrigatório."
+        "404":
+          description: Atleta não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                not_found:
+                  value:
+                    erro: "Atleta não encontrado."
+        "500":
+          description: Erro interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:{REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:{FUNCTION_NAME}/invocations
+components:
+  schemas:
+    OkResponse:
+      type: object
+      properties:
+        ID-ATLETA:
+          type: string
+          example: "771514"
+        RESULTADO:
+          type: string
+          example: "O atleta está pronto para a Maratona"
+    ErrorResponse:
+      type: object
+      properties:
+        erro:
+          type: string
+          example: "Mensagem de erro"

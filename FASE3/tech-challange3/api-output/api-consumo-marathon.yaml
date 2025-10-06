@@ -2,29 +2,23 @@
 
 openapi: 3.0.3
 info:
-  title: Athlete Readiness API (HTTP API)
+  title: Athlete Readiness API
   version: 1.0.0
   description: |
-    Consulta no S3 se o atleta está pronto para a maratona.
-    Endpoint: GET /predict?athlete=ID
-x-amazon-apigateway-cors:
-  allowOrigins:
-    - "*"
-  allowHeaders:
-    - "*"
-  allowMethods:
-    - GET
-    - OPTIONS
+    API que verifica se um atleta está pronto para a maratona.
+servers:
+  - url: https://SEU_API_ID.execute-api.us-east-1.amazonaws.com
+    description: Endpoint público da API (substitua pelo seu)
 paths:
   /predict:
     get:
-      summary: Retorna status do atleta
-      description: Retorna somente o ID do atleta e a mensagem de prontidão.
+      summary: Consultar prontidão do atleta
+      description: Retorna se o atleta está pronto para a maratona com base no modelo armazenado no S3.
       parameters:
         - in: query
           name: athlete
           required: true
-          description: ID do atleta (ex.: 771514)
+          description: ID do atleta (exemplo: `771514`)
           schema:
             type: string
       responses:
@@ -35,10 +29,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/OkResponse"
               examples:
-                exemplo:
+                Exemplo de sucesso:
                   value:
-                    ID-ATLETA: "771514"
-                    RESULTADO: "O atleta está pronto para a Maratona"
+                    data:
+                      athlete_id: "771514"
+                      ready: true
+                      message: "O atleta está pronto para a Maratona"
         "400":
           description: Parâmetro ausente
           content:
@@ -46,9 +42,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               examples:
-                falta_param:
+                Falta de parâmetro:
                   value:
-                    erro: "Parâmetro 'athlete' é obrigatório."
+                    error:
+                      code: "BAD_REQUEST"
+                      message: "Parâmetro 'athlete' é obrigatório."
         "404":
           description: Atleta não encontrado
           content:
@@ -56,34 +54,49 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               examples:
-                not_found:
+                Não encontrado:
                   value:
-                    erro: "Atleta não encontrado."
+                    error:
+                      code: "NOT_FOUND"
+                      message: "Atleta não encontrado."
         "500":
           description: Erro interno
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-      x-amazon-apigateway-integration:
-        payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: POST
-        uri: arn:aws:apigateway:{REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:{FUNCTION_NAME}/invocations
+              examples:
+                Erro interno:
+                  value:
+                    error:
+                      code: "INTERNAL_ERROR"
+                      message: "Falha ao carregar dados de origem."
 components:
   schemas:
     OkResponse:
       type: object
       properties:
-        ID-ATLETA:
-          type: string
-          example: "771514"
-        RESULTADO:
-          type: string
-          example: "O atleta está pronto para a Maratona"
+        data:
+          type: object
+          properties:
+            athlete_id:
+              type: string
+              example: "771514"
+            ready:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "O atleta está pronto para a Maratona"
     ErrorResponse:
       type: object
       properties:
-        erro:
-          type: string
-          example: "Mensagem de erro"
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "BAD_REQUEST"
+            message:
+              type: string
+              example: "Mensagem de erro"

@@ -1,5 +1,14 @@
 # Predição de Aptidão para Maratona
 
+
+## Arquitetura da Solução
+
+![Arquitetura da API](./arquitetura-techchallange3.png)
+
+## Links de consumo da API
+- https://6fsdk9qduf.execute-api.us-east-1.amazonaws.com/athletes (RETORNA A LISTA DE ATLETAS)
+- https://6fsdk9qduf.execute-api.us-east-1.amazonaws.com/predict?athlete=xxxx (BUSCA ESPECIFICA POR ID ATLETA, TEM QUE TROCAR O athlete=xxxxx pelo id desejado)
+
 ## 1. Contexto do Projeto
 Este projeto tem como objetivo **prever se um atleta será capaz de completar uma maratona dentro de limites de tempo de referência** usando dados históricos de corridas.  
 O target foi definido de acordo com o **tempo previsto pelo modelo de Riegel**, considerando:

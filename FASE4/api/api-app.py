@@ -20,7 +20,7 @@ ns = api.namespace("finance", description="Operações com projeções financeir
 # procura CSV no mesmo diretório do script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
 CANDIDATES = [
-    "projecao_itub4_cenarios_ate_2026.csv",
+    "outputs/projecao_itub4_cenarios_ate_2026.csv",
     "dados_yfinance.csv",
 ]
 CSV_PATH = None

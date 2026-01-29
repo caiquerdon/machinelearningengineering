@@ -1,0 +1,104 @@
+Claro — segue um **checklist completo** (bem “mão na massa”) do que você precisa fazer para entregar o Datathon “Case Passos Mágicos”, seguindo exatamente os requisitos do PDF. 
+
+## 1) Entendimento do problema e dados
+
+* [OK] Ler o enunciado e fixar o objetivo: **prever risco de defasagem escolar por estudante**. 
+* [OK] Baixar **base + dicionário de dados** (links citados no PDF). 
+* [ ] Definir claramente:
+
+  * [ ] Qual é a **variável alvo** (target) e como ela representa “risco de defasagem” - GUSTAVO
+  * [ ] Quais colunas entram como **features** - GUSTAVO
+  * [ ] Regras de tratamento de nulos/outliers/categorias raras - GUSTAVO
+
+## 2) Pipeline de treino (end-to-end)
+
+* [ ] Implementar pipeline completa com:
+
+  * [ ] **pré-processamento**
+  * [ ] **feature engineering**
+  * [ ] **treinamento**
+  * [ ] **validação** (split, CV, etc.)
+* [ ] Definir e registrar **métrica(s) de avaliação** e justificar por que o modelo é confiável para produção. 
+* [ ] Salvar o modelo treinado em **pickle ou joblib** para uso posterior na API. 
+
+## 3) Modularização do projeto (arquivos .py separados)
+
+* [ ] Separar o código em módulos (evitar notebook como “produto final”):
+
+  * [ ] `preprocessing.py`
+  * [ ] `feature_engineering.py`
+  * [ ] `train.py`
+  * [ ] `evaluate.py`
+  * [ ] `utils.py`
+* [ ] Manter funções reutilizáveis e fáceis de testar (limpas e com tipagem/docstrings, se possível). 
+
+## 4) API de predição
+
+* [ ] Criar API com **Flask ou FastAPI**. 
+* [ ] Implementar endpoint:
+
+  * [ ] `POST /predict` que recebe dados e retorna previsão(ões) do modelo
+* [ ] Testar localmente com **Postman ou cURL**. 
+
+## 5) Docker (empacotamento)
+
+* [ ] Criar `Dockerfile` para a API + dependências. 
+* [ ] Garantir que:
+
+  * [ ] `docker build` funciona
+  * [ ] `docker run` sobe a API e o `/predict` responde
+
+## 6) Deploy
+
+* [ ] Fazer deploy **local ou em nuvem** (AWS, GCP Cloud Run, Heroku ou outra). 
+* [ ] Gerar e validar o **link final da API** (se for cloud). 
+
+## 7) Testes (obrigatórios)
+
+* [ ] Criar testes unitários com **pytest**. 
+* [ ] Cobrir componentes principais (exemplos):
+
+  * [ ] pré-processamento
+  * [ ] transformação/encoding
+  * [ ] carregamento do modelo
+  * [ ] resposta do `/predict` (pode ser teste simples de integração)
+* [ ] Garantir **mínimo de 80% de cobertura**. 
+
+## 8) Monitoramento contínuo
+
+* [ ] Configurar **logs** da aplicação (requisições, erros, latência, etc.). 
+* [ ] Implementar/entregar um **painel de drift** (mesmo que simples) para acompanhar mudança de distribuição/qualidade do modelo. 
+
+## 9) Documentação (README completo)
+
+No mínimo, sua documentação precisa ter: 
+
+* [ ] **Visão Geral**
+
+  * [ ] Objetivo do projeto
+  * [ ] Solução proposta (pipeline + API)
+  * [ ] Stack tecnológica (Python, sklearn, Flask/FastAPI, pytest, Docker etc.)
+* [ ] **Estrutura de diretórios e arquivos**
+
+  * [ ] Seguir (ou adaptar) o exemplo do PDF (app/, src/, tests/, Dockerfile, requirements, README, notebooks). 
+* [ ] **Instruções de deploy**
+
+  * [ ] Pré-requisitos
+  * [ ] Instalação (`requirements.txt`/`environment.yml`)
+  * [ ] Comandos para treinar/validar/testar
+  * [ ] Comandos Docker (build/run) e/ou cloud
+* [ ] **Exemplos de chamada à API**
+
+  * [ ] Exemplo com `curl` e input/output esperado
+* [ ] **Etapas do pipeline**
+
+  * [ ] Explicar brevemente cada etapa (pré-processamento, features, treino/validação, seleção, pós-processamento se houver)
+
+## 10) Entregáveis finais (o “pacote”)
+
+* [ ] Repositório GitHub com **código organizado + documentado**. 
+* [ ] Documentação (README) completa. 
+* [ ] **Link da API** (se aplicável). 
+* [ ] **Vídeo de até 5 min**, formato gerencial, com pelo menos 1 pessoa do grupo explicando a solução. 
+
+Se você me disser em que ponto você está hoje (ex.: “já treinei modelo mas não tenho API”, ou “já tenho API mas falta Docker/testes”), eu transformo esse checklist em um **plano de execução em ordem** (com prioridades e o que fazer primeiro).

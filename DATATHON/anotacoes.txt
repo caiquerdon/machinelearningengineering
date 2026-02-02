@@ -1,4 +1,8 @@
-Claro — segue um **checklist completo** (bem “mão na massa”) do que você precisa fazer para entregar o Datathon “Case Passos Mágicos”, seguindo exatamente os requisitos do PDF. 
+# PARA OS TESTES UNITARIOS VAMOS TESTAR
+
+- API (Flask): garantir que seus endpoints existem, respondem com o formato certo e tratam erro direito.
+- Código de pipeline (src/): garantir que funções críticas (ex.: construção do target, preprocess, validação de features) funcionam com entradas controladas.
+
 
 ## 1) Entendimento do problema e dados
 

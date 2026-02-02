@@ -1,10 +1,17 @@
 # app/main.py
 from flask import Flask, request, jsonify
+
 from app.model_runtime import load_model, predict_one, MODEL_VERSION
+from app.validation import validate_features
+
 
 def create_app():
     app = Flask(__name__)
     model = load_model()
+
+    @app.get("/")
+    def home():
+        return jsonify({"message": "API no ar. Use /health e /predict"})
 
     @app.get("/health")
     def health():
@@ -16,19 +23,23 @@ def create_app():
 
         # contrato: {"features": {...}}
         features = payload.get("features")
-        if not isinstance(features, dict):
-            return jsonify({
-                "error": "Formato inválido. Envie JSON no formato: {'features': {...}}"
-            }), 400
+
+        try:
+            features = validate_features(features)
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
 
         pred, risk = predict_one(model, features)
-        return jsonify({
-            "prediction": int(pred),
-            "risk_score": float(risk),
-            "model_version": MODEL_VERSION
-        })
+        return jsonify(
+            {
+                "prediction": int(pred),
+                "risk_score": float(risk),
+                "model_version": MODEL_VERSION,
+            }
+        )
 
     return app
+
 
 app = create_app()
 

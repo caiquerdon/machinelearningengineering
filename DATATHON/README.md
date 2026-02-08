@@ -35,7 +35,7 @@ Foram realizadas as seguintes análises na base de treino (`df_train`):
 - Análise de outliers
 - Análise de data drift entre treino e teste
 
-![Distribuição do target](imgs/01_target_rate_train_vs_holdout.png)
+<img width="1259" height="943" alt="01_target_rate_train_vs_holdout" src="https://github.com/user-attachments/assets/2a293b29-7717-4f23-b59c-f495af8703e5" />
 
 ---
 
@@ -78,16 +78,15 @@ Essa faixa apresentou o melhor trade-off entre **recall** e **precision**, maxim
 ---
 
 ## 📊 Avaliação
-
-![PR Curve](imgs/02_precision_recall_curve.png)
-![ROC Curve](imgs/03_roc_curve.png)
-![Confusion Matrix](imgs/04_confusion_matrix.png)
+<img width="1259" height="942" alt="02_precision_recall_curve" src="https://github.com/user-attachments/assets/62ec68ab-bd86-4c8b-9224-3d4e49951e84" />
+<img width="1259" height="942" alt="03_roc_curve" src="https://github.com/user-attachments/assets/5960a73d-0b26-45e0-b459-ddc960de10a5" />
+<img width="1059" height="942" alt="04_confusion_matrix" src="https://github.com/user-attachments/assets/73eb479c-a256-4a99-97a7-7af5356fcdbe" />
 
 ---
 
 ## 🔎 Interpretabilidade
 
-![Feature Importance](imgs/06_feature_importance_top20.png)
+<img width="1652" height="1181" alt="06_feature_importance_top20" src="https://github.com/user-attachments/assets/ad6f53c1-96f8-4bc3-bdc5-9bfdb2409bd1" />
 
 A feature mais importante (`num__def_bin`) representa histórico de defasagem escolar, construída sem vazamento de informação.
 

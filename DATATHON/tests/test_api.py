@@ -20,7 +20,7 @@ def test_predict_ok_with_valid_payload():
     app = create_app()
     client = app.test_client()
 
-    payload = {"features": {"idade": 17, "faltas": 12}}
+    payload = {"features": {"Idade": 17}}
     resp = client.post("/predict", json=payload)
     assert resp.status_code == 200
 

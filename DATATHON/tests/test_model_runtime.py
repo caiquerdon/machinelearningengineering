@@ -3,7 +3,7 @@ def test_predict_one_returns_types_and_range():
     from app.model_runtime import load_model, predict_one
 
     model = load_model()
-    pred, risk = predict_one(model, {"idade": 17, "faltas": 12})
+    pred, risk = predict_one(model, {"Idade": 17})
 
     assert isinstance(pred, int)
     assert isinstance(risk, float)

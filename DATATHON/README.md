@@ -2,6 +2,7 @@
 ## Predição de Risco de Defasagem Escolar
 
 ### Autor  
+**Caique R. Nascimento**
 **Gustavo B. Carrillo**
 
 ---

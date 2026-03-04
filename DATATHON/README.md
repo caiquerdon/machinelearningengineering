@@ -74,70 +74,90 @@ Principais etapas:
 
 # 5. Modelo de Machine Learning
 
-## Tipo de problema
+## 🧠 Formulação do Problema
 
-O problema tratado é uma **classificação binária**.
-
-| Classe | Significado |
-|------|-------------|
-| 0 | Aluno sem risco relevante |
-| 1 | Aluno com risco de defasagem |
-
----
-
-## Modelo utilizado
-
-O modelo selecionado foi:
-
-RandomForestClassifier
-
-Motivações da escolha:
-
-- Alta performance em dados tabulares
-- Baixa necessidade de normalização
-- Robustez contra overfitting
-- Capacidade de capturar relações não lineares
+- **Tipo:** Classificação binária  
+- **Target:** `Defasagem > 0`  
+- **Classe positiva:** Alunos com risco de defasagem escolar  
+- **Validação temporal (realista):**
+  - Treino: **2022 + 2023**
+  - Teste (holdout): **2024**
 
 ---
 
-## Pipeline de inferência
+## 🔍 Análise Exploratória (EDA)
 
-O modelo utilizado em produção está armazenado em:
+Foram realizadas as seguintes análises na base de treino (`df_train`):
 
-artifacts/model.pkl
+- Análise de volumetria (linhas, colunas, alunos únicos)
+- Remoção de colunas 100% nulas
+- Verificação de inconsistências
+- Análise de outliers
+- Análise de data drift entre treino e teste
 
-Esse arquivo contém o **modelo final serializado** que é carregado pela API durante a inicialização.
-
-O carregamento do modelo ocorre em:
-
-app/model_runtime.py
-
-Função responsável:
-
-load_model()
+<img width="1259" height="943" alt="01_target_rate_train_vs_holdout" src="https://github.com/user-attachments/assets/2a293b29-7717-4f23-b59c-f495af8703e5" />
 
 ---
 
-## Threshold de decisão
+## 🏗️ Preparação de Dados
 
-O modelo retorna uma probabilidade (`risk_score`).
-
-A classificação final (`prediction`) é obtida aplicando um threshold otimizado durante o treinamento.
-
-Esse valor é armazenado em:
-
-artifacts/threshold_final.txt
+Pipeline com `ColumnTransformer`, garantindo reprodutibilidade e evitando data leakage.
 
 ---
 
-## Versão do modelo
+## 🌲 Modelo Final: Random Forest
 
-A versão atual do modelo é armazenada em:
+### Hiperparâmetros finais
 
-artifacts/model_version.txt
+```python
+RandomForestClassifier(
+    n_estimators=500,
+    max_depth=8,
+    min_samples_leaf=4,
+    class_weight="balanced_subsample",
+    random_state=42,
+    n_jobs=-1
+)
+```
 
-Essa informação é retornada pela API em cada predição.
+### Justificativa
+Os hiperparâmetros foram escolhidos visando reduzir overfitting, lidar com desbalanceamento e garantir boa generalização temporal.
 
+---
+
+## 📐 Estratégia de Threshold
+
+Foi adotada a faixa:
+
+```
+0.60 ≤ Recall < 0.80
+```
+
+Essa faixa apresentou o melhor trade-off entre **recall** e **precision**, maximizando o F1-score e alinhando-se ao impacto educacional do problema.
+
+---
+
+## 📊 Avaliação
+<img width="1259" height="942" alt="02_precision_recall_curve" src="https://github.com/user-attachments/assets/62ec68ab-bd86-4c8b-9224-3d4e49951e84" />
+<img width="1259" height="942" alt="03_roc_curve" src="https://github.com/user-attachments/assets/5960a73d-0b26-45e0-b459-ddc960de10a5" />
+<img width="1059" height="942" alt="04_confusion_matrix" src="https://github.com/user-attachments/assets/73eb479c-a256-4a99-97a7-7af5356fcdbe" />
+
+---
+
+## 🔎 Interpretabilidade
+
+<img width="1652" height="1181" alt="06_feature_importance_top20" src="https://github.com/user-attachments/assets/ad6f53c1-96f8-4bc3-bdc5-9bfdb2409bd1" />
+
+A feature mais importante (`num__def_bin`) representa histórico de defasagem escolar, construída sem vazamento de informação.
+
+---
+
+## 🚀 Produção
+
+Artefatos gerados:
+- Modelo treinado (`.pkl`)
+- CSV com predições de 2024
+- Threshold operacional fixo
 ---
 
 # 6. API de Inferência
@@ -291,6 +311,7 @@ python -m app.main
 Swagger disponível em:
 
 http://localhost:8000/docs
+
 ## 13. Próximos Passos
 
 -   Automatizar geração de drift

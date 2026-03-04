@@ -7,6 +7,8 @@
 - Caique Rodrigues do Nascimento
 - Gustavo Bortolami Carrillo
 
+# DEPLOY RENDER: https://datathon-ml-api.onrender.com/docs
+
 # 1. Visão Geral
 
 Este projeto implementa uma solução completa de **Machine Learning Engineering** para identificar alunos com **risco de defasagem escolar**.
